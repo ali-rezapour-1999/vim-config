@@ -33,43 +33,31 @@ local M = {
     local lspconfig = require "lspconfig"
     local on_attach = function(client, bufnr)
       local function map(mode, lhs, rhs, desc)
-        if desc then
-          desc = desc
-        end
         vim.keymap.set(mode, lhs, rhs, { buffer = bufnr, desc = desc })
       end
 
-      -- LSP keymaps
+      -- LSP Keymaps
       map("n", "gD", vim.lsp.buf.declaration, "Go to Declaration")
       map("n", "gd", function()
         require("telescope.builtin").lsp_definitions { reuse_win = false }
       end, "Goto Definition")
-      map("n", "K", vim.lsp.buf.hover, "Hover Documentation")
+      map("n", "K", function()
+        if not client.server_capabilities.hoverProvider then
+          return
+        end
+        local params = vim.lsp.util.make_position_params()
+        client.request("textDocument/hover", params, function(err, result)
+          if err or not result or not result.contents then
+            return
+          end
+          vim.lsp.util.open_floating_preview(vim.lsp.util.convert_input_to_markdown_lines(result.contents), "markdown")
+        end, bufnr)
+      end, "Hover Documentation")
       map("n", "gi", vim.lsp.buf.implementation, "Go to Implementation")
       map("n", "<leader>ca", vim.lsp.buf.code_action, "Code Action")
       map("n", "<leader>rn", vim.lsp.buf.rename, "Rename")
       map("n", "<leader>D", vim.lsp.buf.type_definition, "Type Definition")
       map("n", "gr", require("telescope.builtin").lsp_references, "References")
-
-      -- Auto hover setup
-      vim.api.nvim_create_autocmd("CursorHold", {
-        buffer = bufnr,
-        callback = function()
-          if not client.server_capabilities.hoverProvider then
-            return
-          end
-          local params = vim.lsp.util.make_position_params()
-          client.request("textDocument/hover", params, function(err, result)
-            if err or not result or not result.contents then
-              return
-            end
-            vim.lsp.util.open_floating_preview(
-              vim.lsp.util.convert_input_to_markdown_lines(result.contents),
-              "markdown"
-            )
-          end, bufnr)
-        end,
-      })
     end
 
     local capabilities = vim.lsp.protocol.make_client_capabilities()
@@ -96,10 +84,7 @@ local M = {
         opts.settings = {
           Lua = {
             workspace = { checkThirdParty = false },
-            completion = {
-              workspaceWord = true,
-              callSnippet = "Both",
-            },
+            completion = { workspaceWord = true, callSnippet = "Both" },
             hint = {
               enable = true,
               setType = false,
@@ -110,16 +95,11 @@ local M = {
             },
             diagnostics = {
               disable = { "incomplete-signature-doc", "trailing-space" },
-              groupSeverity = {
-                strong = "Warning",
-                strict = "Warning",
-              },
+              groupSeverity = { strong = "Warning", strict = "Warning" },
             },
           },
         }
-      end
-
-      if lsp == "ts_ls" then
+      elseif lsp == "ts_ls" then
         opts.root_dir = require("lspconfig.util").root_pattern ".git"
         opts.single_file_support = false
         opts.settings = {
@@ -139,45 +119,23 @@ local M = {
             },
           },
         }
-      end
-
-      if lsp == "yamlls" then
+      elseif lsp == "yamlls" then
         opts.settings = {
           yaml = {
             keyOrdering = false,
           },
         }
-      end
-
-      if lsp == "jdtls" then
+      elseif lsp == "jdtls" then
         opts.settings = {
           java = {
-            configuration = {
-              updateBuildConfiguration = "automatic",
-            },
-            maven = {
-              downloadSources = true,
-            },
-            implementationsCodeLens = {
-              enabled = true,
-            },
-            referencesCodeLens = {
-              enabled = true,
-            },
-            references = {
-              includeDecompiledSources = true,
-            },
-            inlayHints = {
-              parameterNames = {
-                enabled = "all",
-              },
-            },
-            format = {
-              enabled = false,
-            },
-            signatureHelp = {
-              enabled = true,
-            },
+            configuration = { updateBuildConfiguration = "automatic" },
+            maven = { downloadSources = true },
+            implementationsCodeLens = { enabled = true },
+            referencesCodeLens = { enabled = true },
+            references = { includeDecompiledSources = true },
+            inlayHints = { parameterNames = { enabled = "all" } },
+            format = { enabled = false },
+            signatureHelp = { enabled = true },
             completion = {
               favoriteStaticMembers = {
                 "org.junit.Assert.*",
@@ -192,9 +150,7 @@ local M = {
             },
           },
         }
-      end
-
-      if lsp == "pyright" then
+      elseif lsp == "pyright" then
         opts.settings = {
           python = {
             analysis = {
