@@ -2,9 +2,7 @@ return {
   {
     "kdheepak/lazygit.nvim",
     dependencies = { "nvim-telescope/telescope.nvim" },
-    config = function()
-      require("lazygit").setup()
-    end,
+    config = function() end,
     keys = {
       { "gl", ":LazyGit<CR>", desc = "Open Lazygit" },
     },
