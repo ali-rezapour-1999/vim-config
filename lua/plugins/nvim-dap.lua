@@ -1,8 +1,35 @@
 return {
-  "mfussenegger/nvim-dap",
-  dependencies = {
-    "rcarriga/nvim-dap-ui",
-    "nvim-neotest/nvim-nio",
+  {
+    {
+      "jay-babu/mason-nvim-dap.nvim",
+      config = function()
+        require("mason-nvim-dap").setup {
+          ensure_installed = { "java-debug-adapter", "java-test" },
+          handlers = {},
+        }
+      end,
+    },
+    {
+      "mfussenegger/nvim-jdtls",
+      dependencies = {
+        "mfussenegger/nvim-dap",
+        "ray-x/lsp_signature.nvim",
+      },
+    },
+    {
+      "ray-x/lsp_signature.nvim",
+      config = function()
+        require("lsp_signature").setup()
+      end,
+    },
+  },
+  {
+
+    "mfussenegger/nvim-dap",
+    dependencies = {
+      "rcarriga/nvim-dap-ui",
+      "nvim-neotest/nvim-nio",
+    },
   },
   config = function()
     local dap = require "dap"
