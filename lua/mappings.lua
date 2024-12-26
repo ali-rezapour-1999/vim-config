@@ -22,14 +22,23 @@ keymap.set("n", "dw", 'vb"_d', opts)
 keymap.set("n", "sv", "<C-w>v", opts) -- Split window vertically
 keymap.set("n", "sh", "<C-w>s", opts) -- Split window horizontally
 keymap.set("n", "se", "<C-w>=", opts) -- Equalize window sizes
-keymap.set("n", "cl", ":q<CR>", opts) -- Close the current window
+
+keymap.set("n", "cl", ":q<CR>", opts)
 
 -- Tab management shortcuts
 keymap.set("n", "to", ":tabnew<CR>", opts) -- Open a new tab
 keymap.set("n", "te", ":tabedit<CR>", opts) -- Edit in a new tab
+keymap.set("n", "tl", ":tabnext<CR>", opts)
+keymap.set("n", "th", ":tabprev<CR>", opts)
+
+-- Keybindings for managing buffers within windows
+keymap.set("n", "bc", ":bdelete<CR>", opts)
 
 -- Switch windows
 keymap.set("n", "<Space>", "<C-w>w", opts)
+
+--Neotree
+keymap.set("n", "nt", ":Neotree filesystem reveal toggle left<CR>", {})
 
 -- Telescope shortcuts
 keymap.set("n", "ff", "<cmd>Telescope find_files<cr>", opts) -- Find files
