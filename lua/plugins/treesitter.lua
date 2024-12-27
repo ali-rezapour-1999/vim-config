@@ -12,9 +12,8 @@ return {
     config = function()
       local config = require "nvim-treesitter.configs"
       config.setup {
-        -- Required fields
         auto_install = true,
-        sync_install = false,
+        sync_install = true,
         ensure_installed = {
           "astro",
           "cmake",
