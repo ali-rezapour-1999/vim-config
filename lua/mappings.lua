@@ -23,7 +23,7 @@ keymap.set("n", "sv", "<C-w>v", opts) -- Split window vertically
 keymap.set("n", "sh", "<C-w>s", opts) -- Split window horizontally
 keymap.set("n", "se", "<C-w>=", opts) -- Equalize window sizes
 
-keymap.set("n", "cl", ":q<CR>", opts)
+keymap.set("n", "cl", ":bdelete<CR>", opts)
 
 -- Tab management shortcuts
 keymap.set("n", "to", ":tabnew<CR>", opts) -- Open a new tab

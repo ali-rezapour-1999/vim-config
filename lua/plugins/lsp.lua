@@ -37,8 +37,8 @@ local M = {
       end
 
       -- LSP Keymaps
-      map("n", "gD", vim.lsp.buf.declaration, "Go to Declaration")
-      map("n", "gd", function()
+      map("n", "<C-G>", vim.lsp.buf.declaration, "Go to Declaration")
+      map("n", "<C-k>", function()
         require("telescope.builtin").lsp_definitions { reuse_win = false }
       end, "Goto Definition")
       map("n", "K", function()
@@ -54,9 +54,9 @@ local M = {
         end, bufnr)
       end, "Hover Documentation")
       map("n", "gi", vim.lsp.buf.implementation, "Go to Implementation")
-      map("n", "<leader>ca", vim.lsp.buf.code_action, "Code Action")
+      map("n", "ca", vim.lsp.buf.code_action, "Code Action")
       map("n", "<leader>rn", vim.lsp.buf.rename, "Rename")
-      map("n", "<leader>D", vim.lsp.buf.type_definition, "Type Definition")
+      map("n", "DD", vim.lsp.buf.type_definition, "Type Definition")
       map("n", "gr", require("telescope.builtin").lsp_references, "References")
     end
 
