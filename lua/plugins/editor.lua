@@ -72,4 +72,14 @@ return {
       "MunifTanjim/nui.nvim",
     },
   },
+  {
+    "akinsho/toggleterm.nvim",
+    config = function()
+      require("toggleterm").setup {
+        size = 30,
+        open_mapping = [[,,]],
+        direction = "horizontal",
+      }
+    end,
+  },
 }

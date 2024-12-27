@@ -47,8 +47,8 @@ keymap.set("n", "fb", "<cmd>Telescope buffers<cr>", opts) -- List buffers
 keymap.set("n", "fh", "<cmd>Telescope help_tags<cr>", opts) -- Find help tags
 
 -- Commenting
-keymap.set("n", "<leader>/", "<Plug>(comment_toggle_linewise_current)", { desc = "Toggle comment for current line" })
-keymap.set("v", "<leader>/", "<Plug>(comment_toggle_linewise_visual)", { desc = "Toggle comment for selection" })
+keymap.set("n", "<C-_>", "<Plug>(comment_toggle_linewise_current)", { desc = "Toggle comment for current line" })
+keymap.set("v", "<C-_>", "<Plug>(comment_toggle_linewise_visual)", { desc = "Toggle comment for selection" })
 
 -- Navigate suggestions in insert mode
 keymap.set("i", "<C-j>", "<C-n>", opts) -- Next suggestion
