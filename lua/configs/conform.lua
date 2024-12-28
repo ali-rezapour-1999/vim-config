@@ -8,10 +8,7 @@ local options = {
 		java = { "google-java-format" },
 		python = { "black", "isort" },
 	},
-	format_on_save = {
-		timeout_ms = 500,
-		lsp_fallback = true,
-	},
+	format_on_save = false,
 }
 
 vim.keymap.set({ "n", "v" }, "<leader>f", function()
