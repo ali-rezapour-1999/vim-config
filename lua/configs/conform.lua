@@ -5,10 +5,9 @@ local options = {
 		html = { "prettier" },
 		javascript = { "prettier" },
 		typescript = { "prettier" },
-		java = { "google-java-format" },
 		python = { "black", "isort" },
 	},
-	format_on_save = false,
+	format_on_save = true,
 }
 
 vim.keymap.set({ "n", "v" }, "66", function()

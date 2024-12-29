@@ -1,158 +1,111 @@
 local M = {}
 
 M = {
-  "neovim/nvim-lspconfig",
-  dependencies = {
-    "nvim-telescope/telescope.nvim",
-    {
-      "williamboman/mason.nvim",
-      opts = {
-        ensure_installed = {
-          -- Python
-          "pyright",
-          "ruff",
-          "black",
-          "isort",
-          "debugpy",
-          -- Java
-          "jdtls",
-          "java-debug-adapter",
-          "java-test",
-          -- TypeScript/JavaScript
-          "typescript-language-server",
-          "eslint",
-          -- CSS/TailwindCSS
-          "css-lsp",
-          "tailwindcss-language-server",
-          -- Lua
-          "stylua",
-          "luacheck",
-          -- General Formatter
-          "prettier",
-        },
-      },
-    },
-    -- Add nvim-java and its dependencies
-    {
-      "nvim-java/nvim-java",
-      dependencies = {
-        "nvim-java/lua-async-await",
-        "nvim-java/nvim-java-core",
-        "nvim-java/nvim-java-test",
-        "nvim-java/nvim-java-dap",
-        "MunifTanjim/nui.nvim",
-        "mfussenegger/nvim-dap",
-        "rcarriga/nvim-dap-ui",
-        {
-          "williamboman/mason.nvim",
-          opts = {
-            registries = {
-              "github:nvim-java/mason-registry",
-              "github:mason-org/mason-registry",
-            },
-          },
-        },
-      },
-    },
-  },
-  config = function()
-    local lspconfig = require("lspconfig")
-    
-    local on_attach = function(client, bufnr)
-      local function map(mode, lhs, rhs, desc)
-        vim.keymap.set(mode, lhs, rhs, { buffer = bufnr, desc = desc })
-      end
-      
-      map("n", "<C-G>", vim.lsp.buf.declaration, "Go to Declaration")
-      map("n", "<C-k>", function()
-        require("telescope.builtin").lsp_definitions({ reuse_win = false })
-      end, "Goto Definition")
-      map("n", "K", vim.lsp.buf.hover, "Hover Documentation")
-      map("n", "gi", vim.lsp.buf.implementation, "Go to Implementation")
-      map("n", "ca", vim.lsp.buf.code_action, "Code Action")
-      map("n", "<leader>rn", vim.lsp.buf.rename, "Rename")
-      map("n", "66", function()
-        require("conform").format({
-          async = true,
-          lsp_fallback = true,
-          timeout_ms = 500,
-        })
-      end, "Format File or Range")
-    end
-
-    local capabilities = require("cmp_nvim_lsp").default_capabilities()
-    capabilities.textDocument.completion.completionItem.snippetSupport = true
-
-    require("java").setup({
-      jdk = {
-        auto_install = false, 
-      },
-      jdtls = {
-        auto_install = false, 
-      },
-      settings = {
-        java = {
-          format = {
-            enabled = true,
-            settings = {
-              url = "https://raw.githubusercontent.com/google/styleguide/gh-pages/eclipse-java-google-style.xml",
-            },
-          },
-          signatureHelp = { enabled = true },
-          contentProvider = { preferred = "fernflower" },
-          completion = {
-            favoriteStaticMembers = {},
-            filteredTypes = {
-              "com.sun.*",
-              "io.micrometer.shaded.*",
-              "java.awt.*",
-              "jdk.*",
-              "sun.*",
-            },
-          },
-        },
-      },
-    })
-
-    local servers = {
-      pyright = {},
-      jdtls = {},
-      ts_ls = {},
-      cssls = {},
-      tailwindcss = {},
-      lua_ls = {
-        settings = {
-          Lua = {
-            format = { enable = true },
-            diagnostics = {
-              globals = { "vim" },
-            },
-          },
-        },
-      },
-    }
-
-    for lsp, opts in pairs(servers) do
-      opts.on_attach = on_attach
-      opts.capabilities = capabilities
-      lspconfig[lsp].setup(opts)
-    end
-
-    vim.diagnostic.config({
-      virtual_text = {
-        prefix = "●",
-        source = "always",
-      },
-      float = {
-        source = "always",
-        border = "rounded",
-      },
-      signs = true,
-      underline = true,
-      update_in_insert = false,
-      severity_sort = true,
-    })
-  end,
+	{
+		"williamboman/mason.nvim",
+		opts = function(_, opts)
+			opts.ensure_installed = opts.ensure_installed or {}
+			vim.list_extend(opts.ensure_installed, {
+				"stylua",
+				"selene",
+				"luacheck",
+				"shellcheck",
+				"shfmt",
+				"tailwindcss-language-server",
+				"typescript-language-server",
+				"css-lsp",
+				"jdtls", -- Java Language Server
+			})
+		end,
+	},
+	{
+		"neovim/nvim-lspconfig",
+		opts = function(_, opts)
+			opts.servers = vim.tbl_extend("force", opts.servers or {}, {
+				cssls = {},
+				tailwindcss = {
+					root_dir = function(...)
+						return require("lspconfig.util").root_pattern(".git")(...)
+					end,
+				},
+				tsserver = {
+					root_dir = function(...)
+						return require("lspconfig.util").root_pattern(".git")(...)
+					end,
+					single_file_support = false,
+					settings = {
+						typescript = {
+							inlayHints = {
+								includeInlayParameterNameHints = "literal",
+								includeInlayFunctionParameterTypeHints = true,
+								includeInlayPropertyDeclarationTypeHints = true,
+							},
+						},
+						javascript = {
+							inlayHints = {
+								includeInlayParameterNameHints = "all",
+								includeInlayFunctionParameterTypeHints = true,
+								includeInlayVariableTypeHints = true,
+							},
+						},
+					},
+				},
+				html = {},
+				yamlls = {
+					settings = {
+						yaml = {
+							keyOrdering = false,
+						},
+					},
+				},
+				lua_ls = {
+					single_file_support = true,
+					settings = {
+						Lua = {
+							workspace = { checkThirdParty = false },
+							diagnostics = { globals = { "vim" } },
+							format = {
+								enable = false,
+								defaultConfig = {
+									indent_style = "space",
+									indent_size = "2",
+								},
+							},
+						},
+					},
+				},
+				-- Java configuration
+				jdtls = {
+					root_dir = function(fname)
+						return require("lspconfig.util").root_pattern("pom.xml", "build.gradle", ".git")(fname)
+					end,
+					cmd = { "jdtls" },
+					settings = {
+						java = {
+							home = "/usr/lib/jvm/java-17-openjdk", -- Adjust to your Java installation path
+							configuration = {
+								runtimes = {
+									{
+										name = "JavaSE-17",
+										path = "/usr/lib/jvm/java-17-openjdk",
+									},
+									{
+										name = "JavaSE-11",
+										path = "/usr/lib/jvm/java-11-openjdk",
+									},
+								},
+							},
+						},
+					},
+					init_options = {
+						workspaceFolders = {
+							vim.fn.fnamemodify(vim.fn.getcwd(), ":p"),
+						},
+					},
+				},
+			})
+		end,
+	},
 }
 
 return M

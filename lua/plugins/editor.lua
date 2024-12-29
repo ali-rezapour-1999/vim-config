@@ -81,4 +81,36 @@ return {
 			})
 		end,
 	},
+	{
+		"rcarriga/nvim-notify",
+		lazy = false,
+		config = function()
+			local notify = require("notify")
+			notify.setup({
+				position = "top_right",
+				stages = "fade",
+				timeout = 5000,
+				top_down = true,
+				render = "default",
+				border = "rounded",
+				background_colour = "#1e1e2e",
+				max_height = function()
+					return math.floor(vim.o.lines * 0.75)
+				end,
+				max_width = function()
+					return math.floor(vim.o.columns * 0.75)
+				end,
+				on_open = function(win)
+					vim.api.nvim_win_set_config(win, {
+						border = "rounded",
+						relative = "editor",
+						anchor = "NE",
+						row = 1,
+						col = vim.o.columns - 1,
+					})
+				end,
+			})
+			vim.notify = notify
+		end,
+	},
 }
