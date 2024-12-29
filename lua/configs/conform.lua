@@ -11,7 +11,7 @@ local options = {
 	format_on_save = false,
 }
 
-vim.keymap.set({ "n", "v" }, "<leader>f", function()
+vim.keymap.set({ "n", "v" }, "66", function()
 	require("conform").format({
 		async = true,
 		lsp_fallback = true,

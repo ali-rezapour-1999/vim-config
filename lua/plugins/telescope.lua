@@ -4,7 +4,6 @@ return {
   dependencies = {
     {
       "nvim-lua/plenary.nvim",
-      build = "make",
     },
     "nvim-telescope/telescope-file-browser.nvim",
   },
